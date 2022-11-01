@@ -1,0 +1,59 @@
+<h1>Hellow World</h1>
+<p>Url: <[URLPAGE]></p>
+<p><a href='/teste?q=aaaa'>Vai para teste page</a></p>
+<p><a href='/page-nao-existe-haha?q=aaaa'>Vai para teste page não existente</a></p>
+<p><button type='button' id='testaFetch'>Teste Fetch</button></p>
+<p><input id='msg' type='text' value='' /></p>
+<p><button type='button' id='socMes'>Send message</button></p>
+<div>
+	<form action="/teste/testando" method='POST'>
+  <label for="fname">Nome:</label><br>
+  <input type="text" id="fname" name="name" value="Saito"><br>
+  <label for="lname">Uga?</label><br>
+  <input type="text" id="lname" name="ugaQuestion" value="uga"><br><br>
+  <label for="file">File</label><br>
+  <input type="file" id="file" name="file" multiple><br><br>
+  <input type="submit" value="Submit">
+	</form>
+</div>
+
+<[<script type='text/javascript'>
+	
+	var testaFetch = document.getElementById("testaFetch");
+	testaFetch.addEventListener("click", function () {
+		var myInit = { method: 'POST' };
+		fetch('/teste/testaFetch', myInit).then(function(response) {
+	  if(response.ok) {
+	    console.log('Network response was ok.');
+			console.log(response);
+			response.text().then(function (text) {
+				console.log(text);
+			})
+	    /*response.blob().then(function(myBlob) {
+	    console.log(myBlob);
+	    });*/
+	  } else {
+	    console.log('Network response was not ok.');
+	  }
+	})
+	.catch(function(error) {
+	  console.log('There has been a problem with your fetch operation: ' + error.message);
+	});
+	});
+	
+</script>]>
+<[<script type='text/javascript'>
+	console.log("scriptor!2");
+	var exampleSocket = new WebSocket("wss://MyCppWebPort.alexandres18.repl.co/ws-connection");
+	exampleSocket.onerror = function (e) {alert("error!"); console.log(e); }
+  exampleSocket.onopen = function(e) { alert("opened");
+						exampleSocket.send("hellow!");												 
+																		 }
+  exampleSocket.onclose = function(e) { console.log("closed"); console.log(e); }
+  exampleSocket.onmessage = function(e) { alert(e.data); }
+	var testaFetch = document.getElementById("socMes");
+	testaFetch.addEventListener("click", function () {
+		//exampleSocket.send("message!!");		
+		exampleSocket.send(document.getElementById("msg").value);		
+	});
+</script>]>

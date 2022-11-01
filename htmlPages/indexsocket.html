@@ -1,0 +1,7 @@
+<[<script type='text/javascript'>
+	console.log("scriptor!2");
+var exampleSocket = new WebSocket("wss://MyCppWebPort.alexandres18.repl.co/ws-connection");
+  exampleSocket.onopen = function(e) { alert("opened"); }
+  exampleSocket.onclose = function(e) { console.log("closed"); console.log(e); }
+  exampleSocket.onmessage = function(e) { alert(e.data); }
+</script>]>

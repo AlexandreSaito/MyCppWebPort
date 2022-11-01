@@ -1,0 +1,29 @@
+.chat{
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+	padding: 2px;
+	height: 200px;
+  max-height: 200px;
+  background-color: #04040421;
+	border: 2px solid black;
+	z-index: 100;
+}
+
+.chat>.chat-text-area{
+	height: 87%;
+	overflow-y: scroll;
+}
+
+.chat>.chat-input{
+	
+}
+
+.chat>.chat-input>.chat-text-input{
+	border: 2px solid grey;
+  line-height: 18px;
+}
+
+.chat>.chat-input>.chat-submit-input{
+	    height: 23px;
+}

@@ -1,0 +1,81 @@
+*{
+	-webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ui-backdrop{
+	position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+	display: none;
+}
+
+.ui-backdrop.in{
+	z-index: 200;
+	display: block;
+	opacity: .5;
+}
+
+.ui_backdrop.fade{
+	transition: opacity .15s linear;
+	opacity: 0;
+}
+.ui_backdrop.fade.in{
+	transition: opacity .15s linear;
+}
+
+
+.half-roulette-menu{
+	background-image: linear-gradient(to right, rgb(4 4 4 / 80%),rgb(60 60 60 / 80%),rgb(92 92 92 / 80%), rgb(108 108 108 / 80%),rgb(128 128 128 / 50%));
+	position: absolute;
+	min-height: 300px;
+	width: 100px;
+	height: 100px;
+	top: 25%;
+	left: 10%;
+	opacity: .8;
+	z-index: 300;
+	border-radius: 0 300px 300px 0;
+	/*overflow: hidden;*/
+}
+
+.half-roulette-menu-itens{
+  margin: 0;
+	position: relative;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+	height: 80%;
+}
+
+.half-roulette-menu-item{
+	width: 90%;
+	height: 50px;
+	background: white;
+	margin-left: 10%;
+	margin-bottom: 15px;
+}
+
+.half-roulette-menu-item:first-child{
+	transform: rotate(-15deg);
+	border-radius: 0px 130px 6px 8px;
+
+}
+
+.half-roulette-menu-item:last-child{
+	transform: rotate(15deg);
+	border-radius:0px 8px 130px 0px;
+}
+
+.half-roulette-menu-item:nth-child(2){
+	clip: rect(0px, 300px, 300px, 150px);
+}
+
+.half-roulette-menu-item:nth-last-child(2){
+	
+}
