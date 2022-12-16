@@ -9,12 +9,9 @@
 #include <sstream> // std::stringstream
 #include "http/request.hpp" // Request class
 #include "http/page.hpp" // Page class
-//#include <openssl/sha.h> // sha1 cryptography
-//#include "./../base64.hpp" // encode/decode base64
 #include <sys/socket.h>
 #include "socket/socket.hpp"
 #include "socket/socketHandler.hpp"
-//#include <sys/ioctl.h> // nonblocking socket
 #include <sys/poll.h> // poll socket
 
 #ifndef PORT

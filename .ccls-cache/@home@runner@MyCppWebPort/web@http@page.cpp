@@ -13,9 +13,11 @@ web::http::Page::Page(Request *req, Response *res) {
   this->folderPath = "./htmlPages/";
   this->folderLayoutPath = "./htmlPages/";
   this->layoutFile = "_layout.html";
+  this->partialLayoutFile = "_layout_partial.html";
 	this->pageName = "";
 	this->responseContentType = "";
   this->useLayout = true;
+  this->partialLayout = false;
 	this->sendHTML = true;
 	this->sendJSON = false;
 }
@@ -66,13 +68,17 @@ void web::http::Page::Send() {
 			else
 				this->responseContentType = "plain";
     }
+		std::cout << "[PAGE_SEND] Content type: " << this->responseContentType << "; Header Content-type: " << get_content_type(this->responseContentType) << std::endl;
     this->response->header.AddHeader("Content-Type", get_content_type(this->responseContentType));
   }
 
-  if (this->sendHTML && this->useLayout) {
+  if (this->sendHTML && this->useLayout && !this->partialLayout) {
     this->response->AddLayout(
         cstf::readFile(this->folderLayoutPath + this->layoutFile));
   }
+	if(this->sendHTML && this->partialLayout){
+    //this->response->AddLayout(cstf::readFile(this->folderLayoutPath + this->partialLayoutFile));
+	}
 
   response->Respond(codStatus, response->header);
 }

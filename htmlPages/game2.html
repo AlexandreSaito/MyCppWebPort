@@ -1,0 +1,133 @@
+<div class="page-header">
+  <h3>Game 2<span style="display: none;">FPS: <span id="fps"></span></span></h3>
+</div>
+<div class="content" style="height: 100%;">
+	<canvas id="myCanvas" tabindex='0' width="500" height="200" style="border:1px solid #000000;">
+</canvas>
+</div>
+<[<script type="module">
+	import { createWebsocketMessage } from "/dist/js-modules/connection.js"
+	import { domController } from "/dist/js-modules/main.js"
+	import * as eng from "/dist/game/2deng.js"
+
+	let controller = [
+		{ key: "D", actionName: "moveRight" },
+		{ key: "A", actionName: "moveLeft" },
+		{ key: "W", actionName: "moveUp" },
+		{ key: "S", actionName: "moveDown" },
+	];
+	
+	let commands = {
+		moveRight: {
+			validate: (p) => {
+				//console.log("move Right");
+				//console.log(p.actions.moveRight && !p.actions.moveLeft);
+				if(p.actions.moveRight && !p.actions.moveLeft) {
+					return true;
+				}
+				return false;
+			},
+			action: (p) => {
+				p.position.x += p.rules.velocity.x;
+			}
+		},
+		moveLeft: {
+			validate: (p) => {
+				if(p.actions.moveLeft && !p.actions.moveRight)
+					return true;
+				return false;
+			},
+			action: (p) => {
+				p.position.x -= p.rules.velocity.x;
+			}
+		},
+		moveDown: {
+			validate: (p) => {
+				if(p.actions.moveDown)
+					return true;
+				return false;
+			},
+			action: (p) => {
+				p.position.y += p.rules.velocity.y;
+			}
+		},
+		moveUp: {
+			validate: (p) => {
+				if(p.actions.moveUp)
+					return true;
+				return false;
+			},
+			action: (p) => {
+				p.position.y -= p.rules.velocity.y;
+			}
+		},
+	};
+	
+	let canvas = document.querySelector("#myCanvas");
+	let world = new eng.World({width: canvas.width, height: canvas.height, canvas: canvas});
+
+	//world.addCharacter({position: {x: 50, y: 50}, fillStyle: "#FF0000", commands: commands, hasCollision: true, });
+	//world.addPlayer({position: {x: 20, y: 20}, fillStyle: "#000000", controller: controller, hasCollision: true, commands: commands, });
+	world.hasGravity = false;
+	
+	console.log(world);
+
+	var gameSocket = new WebSocket("wss://MyCppWebPort.alexandres18.repl.co/ws-connection/game");
+	
+  gameSocket.onopen = function(e) { 
+		gameSocket.send(createWebsocketMessage({userName: "player1"}, {op: 1})); 
+		gameSocket.send(createWebsocketMessage({userName: "player1"}, {op: 8})); 
+	}
+  gameSocket.onclose = function(e) { 
+		console.log("closed"); console.log(e); 
+	}
+	gameSocket.onmessage = function(e) {
+		let data = JSON.parse(e.data);
+		switch(data.op) {
+			case 1:
+				if(data.accept){
+					world.addPlayer({
+						controller: controller, 
+						id: data.playerId, 
+						onkeyup: (p, actionName) => { gameSocket.send(createWebsocketMessage(p.actions, {op: 8})); },
+						onkeydown: (p, actionName) => { gameSocket.send(createWebsocketMessage(p.actions, {op: 8})); },
+						position: {x: 20, y: 20}, 
+						fillStyle: "#000000", 
+						hasCollision: true, 
+						commands: commands, 
+					});
+					return;
+				}
+				world.addCharacter({id: data.playerId, position: {x: 50, y: 50}, fillStyle: "#FF0000", commands: commands, hasCollision: true, });
+				break;
+			case 8:
+				if(data.accept){
+					return;
+				}
+				let char = world.getCharacterById(data.playerId);
+				if(!char)
+					return;
+				char.actions = data;
+				console.log(char);
+				break;
+		}
+	}
+
+	let fpsEl = document.querySelector("#fps");
+	let fps = 0;
+
+	function gameLoop(){
+		world.update();
+		world.draw();
+		fps++;
+	}
+
+	domController.pageLoops.push(setInterval(gameLoop, 1000/60));
+	domController.pageLoops.push(setInterval(()=>{ fpsEl.innerHTML = fps; fps = 0; }, 1000));
+	
+	// do cleaning
+	domController.onPageRemoved = () => {
+		
+	};
+	
+</script>]>

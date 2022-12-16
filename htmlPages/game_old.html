@@ -1,0 +1,132 @@
+<div class="page-header">
+  <h3>Game</h3>
+</div>
+<div class="content" style="height: 100%;">
+	<div id="player" tabindex="0" style="top: 0px; left: 0px; width: 50px; height: 50px; background-color: white; position: absolute;"></div>
+	<script type="text/javascript" src="/dist/fggame/fg.js"></script>
+</div>
+
+<[<script type='text/javascript'>
+
+	class Character{
+		constructor({controller, object}){
+			this.controller = {	
+				up: false,
+				down: false,
+				right: false,
+				left: false,
+			};
+			this.self = object;
+			this.width = 50;
+			this.height = 50;
+		}
+
+		move(){
+			let pLeft = Number.parseInt(this.self.style.left.replace("px", ""));
+			let pTop = Number.parseInt(this.self.style.top.replace("px", ""));
+			
+			if(this.controller.right && !this.controller.left){
+				if(pLeft + gameRules.velocity + this.width > content.clientWidth){
+					return;
+				}
+				this.self.style.left = `${pLeft + gameRules.velocity}px`;
+			}
+			if(this.controller.left && !this.controller.right){
+				if(pLeft - gameRules.velocity < 0){
+					return;
+				}
+				this.self.style.left = `${pLeft - gameRules.velocity}px`;
+			}
+			if(this.controller.up && !this.controller.down){
+				if(pTop - gameRules.velocity < 0){
+					return;
+				}
+				this.self.style.top = `${pTop - gameRules.velocity}px`;
+			}
+			if(this.controller.down && !this.controller.up){
+				if(pTop + gameRules.velocity  + this.height > content.clientHeight){
+					return;
+				}
+				this.self.style.top = `${pTop + gameRules.velocity}px`;
+			}
+		}
+	}
+
+	class Player extends Character{
+		constructor(params){
+			super(params);
+			this.registerCommands();
+		}
+
+		registerCommands(){
+			let controller = this.controller;
+			
+			this.self.addEventListener("keydown", function(e){
+				switch(e.key.toUpperCase()){
+					case playerKeys.up:
+						controller.up = true;
+						break;
+					case playerKeys.down:
+						controller.down = true;
+						break;
+					case playerKeys.right:
+						controller.right = true;
+						break;
+					case playerKeys.left:
+						controller.left = true;
+						break;
+				}
+			});
+			
+			this.self.addEventListener("keyup", function(e){
+				switch(e.key.toUpperCase()){
+					case playerKeys.up:
+						controller.up = false;
+						break;
+					case playerKeys.down:
+						controller.down = false;
+						break;
+					case playerKeys.right:
+						controller.right = false;
+						break;
+					case playerKeys.left:
+						controller.left = false;
+						break;
+				}
+			});
+		}
+		
+	}
+
+	var gs; // game socket
+	const player = document.querySelector("#player");
+	const content = document.querySelector(".content");
+	
+	const playerKeys = {
+		up: 'W',
+		down: 'S',
+		right: 'D',
+		left: 'A',
+	};
+
+	const gameRules = {
+		velocity: 10,
+	};
+
+	const playerObj = new Player({object: player});
+	const characters = [];
+	
+	function gameLoop(){
+		playerObj.move();
+		for(var i = 0; i < characters.length; i++){
+			characters[i].move();
+		}
+	}
+		
+	(function () { 
+		gs = new WebSocket("wss://MyCppWebPort.alexandres18.repl.co/ws-connection/game");
+		
+		setInterval(gameLoop, 1000/60);
+	})();
+
+</script>]>

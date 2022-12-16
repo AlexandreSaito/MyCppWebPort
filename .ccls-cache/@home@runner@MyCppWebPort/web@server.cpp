@@ -33,8 +33,6 @@ void web::server::start_server() {
   // minute.
   setsockopt(fdServer, SOL_SOCKET, SO_REUSEADDR, (char *)&num, sizeof(int));
 
-  // ioctl(fdServer, FIONBIO, (char *)&num);
-
   if (bind(fdServer, (const sockaddr *)&addr, sizeof(sockaddr_in)) < 0) {
     std::cerr << "[SOCKET]Socket failed to bind.\n";
     return;
@@ -117,7 +115,6 @@ void web::server::listen_request() {
     std::string path = request->GetHeader().GetPath();
     if (path.find("/ws-connection") != -1) {
       std::cout << "[LISTEN]Adding new webSocket to pull" << std::endl;
-      // new_web_socket_connections.push(*request);
       web::web_socket::send_handshake(request);
       register_fd_connection(
           request->fdRequest,
@@ -196,12 +193,14 @@ void web::server::handle_page() {
       }
     }
 
+		if(request->queryData.find("partial") != request->queryData.end())
+			page->partialLayout = true;
+		
     page->Run();
     page->Send();
 
     if (page != nullptr)
       delete (page);
-    // if ( request != nullptr ) delete (request);
     if (response != nullptr)
       delete (response);
   }
@@ -217,20 +216,6 @@ void web::server::handle_websocket() {
 
   int nfds;
   while (server_running) {
-    // std::cout << "+Checking new socket " <<
-    // new_web_socket_connections.empty() << std::endl;
-
-    /*while (!new_web_socket_connections.empty()) {
-      web::http::Request req = new_web_socket_connections.front();
-      new_web_socket_connections.pop();
-      web::web_socket::send_handshake(&req);
-      std::cout << "Socket URL: " << req.GetHeader().GetPath() << std::endl;
-      register_fd_connection(
-          req.fdRequest,
-          cstf::replace(req.GetHeader().GetPath(), "/ws-connection", ""));
-      //std::string helloMessage = "Hellow!!!";
-      //web::web_socket::send_message(req.fdRequest, helloMessage);
-    }*/
 
     if (fd_connections.size() == 0)
       continue;
@@ -246,12 +231,11 @@ void web::server::handle_websocket() {
 
     nfds = pollFdCurrentSize;
     int ready = poll(pollFds, nfds, 100);
-    // std::cout << "+++++Poll ready: " << ready << std::endl;
 
     for (int j = 0; j < nfds; j++) {
 
       if (pollFds[j].revents != 0) {
-        printf("+++++ fd=%d; events: %s%s%s\n", pollFds[j].fd,
+        printf("[WS] fd=%d; events: %s%s%s\n", pollFds[j].fd,
                (pollFds[j].revents & POLLIN) ? "POLLIN " : "",
                (pollFds[j].revents & POLLHUP) ? "POLLHUP " : "",
                (pollFds[j].revents & POLLERR) ? "POLLERR " : "");
@@ -259,38 +243,55 @@ void web::server::handle_websocket() {
         if (pollFds[j].revents & POLLIN) {
           int count = 0;
           // Try get more content when buffer is full
+					std::vector<char> p;
+					int contEmpty = 0;
           do {
             // Cleaning buffer array
             std::fill_n(buffer, bufferLength, '\0');
             count = read(pollFds[j].fd, buffer, bufferLength);
+          	std::cout << "[WS] Count: " << count << std::endl;
             body << buffer;
+						for(int i = 0; i < bufferLength; i ++){
+							if(buffer[i] == '\0'){
+								contEmpty = i;
+								break;
+							}
+							p.push_back(buffer[i]);
+						}
+          	std::cout << "[WS] Buffer: " << body.str().size() << std::endl;
           } while (count == bufferLength);
 
+          std::cout << "[WS_TESTE] Empty: " << contEmpty << std::endl;
+					std::string c = web::web_socket::parse_content(p);
+					
           std::string content = body.str();
           body.str("");
-          std::cout << "+++++ content body: " << content << std::endl;
+          std::cout << "[WS] Content body: " << content << std::endl;
           if (content == "") {
-            std::cout << "+++++ Should close " << pollFds[j].fd << std::endl;
+            std::cout << "[WS] Should close " << pollFds[j].fd << std::endl;
             // handle close fd
             remove_fd_connection(pollFds[j].fd);
             close(pollFds[j].fd);
             continue;
-          } else {
-            content = web::web_socket::parse_readed_content(content);
-            std::cout << "+++++ parsed content: " << content << std::endl;
-
-            // handle message
-            auto user_pair = fd_connections.find(pollFds[j].fd);
-            if (user_pair == fd_connections.end()) {
-              std::cout << "{FAILED} Faild to find fd_connections pair"
-                        << std::endl;
-              continue;
-            }
-            web::web_socket::handle(user_pair->first, user_pair->second,
-                                    content);
           }
+					
+					// handle message
+					auto user_pair = fd_connections.find(pollFds[j].fd);
+					if (user_pair == fd_connections.end()) {
+						std::cout << "[WS] {FAILED} Faild to find fd_connections pair" << std::endl;
+						continue;
+					}
+					
+					content = web::web_socket::parse_readed_content(content);
+					std::vector<std::string> contents = cstf::splitString(content, "[ENDMESSAGE]");
+
+					for(int i = 0; i < contents.size(); i++){
+						std::cout << "[WS] Parsed content: " << contents[i] << std::endl;
+						web::web_socket::handle(user_pair->first, user_pair->second, contents[i]);
+					}
+
         } else { /* POLLERR | POLLHUP */
-          std::cout << "+++++ Should close " << pollFds[j].fd << std::endl;
+          std::cout << "[WS] Should close " << pollFds[j].fd << std::endl;
           // handle close fd
           remove_fd_connection(pollFds[j].fd);
           close(pollFds[j].fd);
@@ -307,7 +308,7 @@ void web::server::handle_websocket() {
 
 void web::server::register_fd_connection(int fdClient, std::string alias) {
   fd_connections.insert(
-      std::make_pair(fdClient, alias)); //.insert(std::pair(fdClient, alias));
+      std::make_pair(fdClient, alias));
 }
 
 void web::server::remove_fd_connection(int fdClient) {

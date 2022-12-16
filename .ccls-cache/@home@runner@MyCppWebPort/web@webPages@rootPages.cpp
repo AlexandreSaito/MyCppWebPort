@@ -13,6 +13,33 @@ public:
   }
 };
 
+class TodoPage : public web::http::Page {
+public:
+  explicit TodoPage(web::http::Request *req, web::http::Response *res)
+      : Page(req, res) {}
+  void PageLoad() {
+    response->WriteToContent(this->ReadFromFile("todo.html"));
+  }
+};
+
+class GamePage : public web::http::Page {
+public:
+  explicit GamePage(web::http::Request *req, web::http::Response *res)
+      : Page(req, res) {}
+  void PageLoad() {
+    response->WriteToContent(this->ReadFromFile("game.html"));
+  }
+};
+
+class Game2Page : public web::http::Page {
+public:
+  explicit Game2Page(web::http::Request *req, web::http::Response *res)
+      : Page(req, res) {}
+  void PageLoad() {
+    response->WriteToContent(this->ReadFromFile("game2.html"));
+  }
+};
+
 class IndexTestePage : public web::http::Page {
 public:
   explicit IndexTestePage(web::http::Request *req, web::http::Response *res)

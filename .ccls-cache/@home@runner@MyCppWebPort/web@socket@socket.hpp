@@ -15,7 +15,7 @@ namespace web_socket{
 
 const std::string websocket_hash = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
-extern  std::thread chat_reflect_handler;
+extern std::thread chat_reflect_handler;
 
 void send_handshake(web::http::Request *request);
 
@@ -26,6 +26,8 @@ std::string encrypt_message(std::string message);
 void send_message(int fdClient, std::string message);
 
 void send_messaeg(int listFdClient[], std::string message);
+
+std::string parse_content(std::vector<char> toParse);
 
 }
 }

@@ -10,6 +10,7 @@ namespace web_socket{
 
 struct SocketMessage{
 	int clientFd;
+	int op;
 	std::string clientToken;
 	bool reconnect;
 	std::string message;

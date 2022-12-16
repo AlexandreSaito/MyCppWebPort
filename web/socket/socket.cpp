@@ -47,44 +47,65 @@ void web::web_socket::send_handshake(web::http::Request *request) {
 
 std::string web::web_socket::parse_readed_content(std::string toParse) {
   int readed = 1;
+  int toParseLength = toParse.size();
   // opcode it's at index 1
-  int opcode = (int)toParse.substr(0, 1)[0];
-  std::cout << "+parse_content+opcode: " << opcode << std::endl;
+  int opcode = (int)toParse.substr(0, 1)[0] & 0x7f;
+  std::cout << "[WS_PARSE] TO PARSE LENGTH: " << toParseLength << std::endl;
+  std::cout << "[WS_PARSE] OPCODE: " << opcode << std::endl;
+  int contentLength = (int)toParse.substr(1, 1)[0] & 0x7f;
+  std::cout << "[WS_PARSE] Content Length: " << contentLength << std::endl;
 
   readed = 2;
-  if (readed > toParse.length()) {
-    std::cout << "[PARSE_WEBSOCKET]Content invalid" << std::endl;
+  if (readed >= toParse.length()) {
+    std::cout << "[WS_PARSE] Content invalid" << std::endl;
     return "";
   }
   // content length it's at index 2
   // content length = (index2 - 128)
-  int contentLength = (int)toParse.substr(1, 1)[0] & 0x7f;
-  // std::cout << "+parse_content+contentLength: " << contentLength <<
-  // std::endl;
+  if (contentLength == 126) {
+    int countOf256 = (int)toParse.substr(readed, 1)[0] & 0x7f;
+    readed++;
+    int contentLength2 = (int)toParse.substr(readed, 1)[0] & 0x7f;
+    readed++;
+    std::cout << "[WS_PARSE] Cont of 256: " << countOf256 << std::endl;
+    std::cout << "[WS_PARSE] Content Length2: " << contentLength2 << std::endl;
+    contentLength = (countOf256 * 256) + contentLength2;
+  }
+  std::cout << "[WS_PARSE] Content Length Final: " << contentLength
+            << std::endl;
 
-  readed = 6;
-  if (readed > toParse.length()) {
-    std::cout << "[PARSE_WEBSOCKET]Content invalid" << std::endl;
+  if (readed + 4 > toParse.length()) {
+    std::cout << "[WS_PARSE] Content invalid - Count with mask key is higher "
+                 "then actual content length."
+              << std::endl;
     return "";
   }
-  // mas key it's at index 3~6
-  std::string maskKey = toParse.substr(2, 4);
-  // std::cout << "+parse_content+maskKey: " << maskKey << std::endl;
+  // mas key it's at 4 bytes after content length
+  std::string maskKey = toParse.substr(readed, 4);
 
-  readed = 6 + contentLength;
-  if (readed > toParse.length()) {
-    std::cout << "[PARSE_WEBSOCKET]Content invalid" << std::endl;
-    return "";
+  readed += 4;
+  if (readed + contentLength > toParse.length()) {
+    std::cout << "[WS_PARSE] Content invalid - Content Length it's higher then "
+                 "actual content length. "
+              << toParse.length() << " - " << (readed + contentLength)
+              << std::endl;
+    contentLength = toParse.length() - readed;
+    // return "";
   }
-  // from 6 it's only content
-  std::string content = toParse.substr(6, contentLength);
-  // std::cout << "+parse_content+contents" << contents << std::endl;
+  // after mask key all of it is content
+  std::string content = toParse.substr(readed, contentLength);
 
+  std::cout << "[WS_PARSE] Content Length Before Parse: " << contentLength
+            << std::endl;
   for (int i = 0; i < contentLength; i++) {
     char mask = maskKey[i % 4];
+    // std::cout << "i - " << i % 4 << "mask: " << (int)mask << " - Content: "
+    // << (int)content[i] << " - result: " << (char)(content[i] ^ mask) << ", ";
     content[i] = (char)(content[i] ^ mask);
   }
+  std::cout << "[WS_PARSE] Content: " << content << std::endl;
 
+  readed += contentLength;
   if (readed < toParse.length()) {
     content +=
         parse_readed_content(toParse.substr(readed, toParse.length() - readed));
@@ -114,4 +135,9 @@ void web::web_socket::send_messaeg(int listFdClient[], std::string message) {
   for (int i = 0; i < clientsLength; i++) {
     send(listFdClient[i], encryptMessage.c_str(), encryptMessage.length(), 0);
   }
+}
+
+std::string web::web_socket::parse_content(std::vector<char> toParse) {
+  std::cout << "[WS_TESTE] TO PARSE LEN: " << toParse.size() << std::endl;
+	return "";
 }

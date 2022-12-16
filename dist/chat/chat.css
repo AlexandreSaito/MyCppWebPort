@@ -1,29 +1,246 @@
-.chat{
-  position: fixed;
+#header-chat {
+  min-width: 0px;
+  width: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
+  transition: width 0.2s linear 0.2s, margin 0.1s linear 0.2s;
+}
+#header-chat.show {
+  width: 45px;
+}
+#header-chat > i {
+  position: relative;
+  left: 55px;
+  transition: left 0.2s linear;
+}
+#header-chat.show > i {
+  left: 0px;
+}
+
+#user-name-form {
+  color: black;
+  position: absolute;
+  top: 60px;
+  right: 100%;
+  padding-right: 25px;
+  border: 1px solid black;
+  z-index: 500;
+  background-color: #b2bddb;
+  transition: right 0.3 ease-in;
+}
+
+#user-name-form.show {
+  right: -5px;
+}
+
+#chat {
+  position: absolute;
+  right: 15px;
   bottom: 10px;
-  right: 10px;
-	padding: 2px;
-	height: 200px;
-  max-height: 200px;
-  background-color: #04040421;
-	border: 2px solid black;
-	z-index: 100;
+  transition: transform var(--chat-close-timing) ease-in,
+    bottom 1s ease-in var(--chat-close-timing);
+  z-index: 100;
+
+  width: var(--chat-icon-height);
+  height: var(--chat-icon-height);
 }
 
-.chat>.chat-text-area{
-	height: 87%;
-	overflow-y: scroll;
+#chat:before {
+  content: "\f0e6";
+  font: normal normal normal 14px/1 FontAwesome;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: pink;
+  text-align: center;
+  line-height: var(--chat-icon-height);
+  z-index: 105;
 }
 
-.chat>.chat-input{
-	
+#chat.open {
+  transform: rotate(0deg);
+}
+#chat.close {
+  transform: rotate(90deg);
+  transition-delay: calc(
+    var(--chat-user-close-timing) + var(--chat-users-close-timing)
+  );
+}
+#chat.close.hidden {
+  transform: rotate(720deg);
+  bottom: 100%;
 }
 
-.chat>.chat-input>.chat-text-input{
-	border: 2px solid grey;
-  line-height: 18px;
+#chat .chat-user {
+  position: absolute;
+  width: 150px;
+  height: 130px;
+  right: 0px;
+  bottom: calc(var(--chat-icon-height) / 2);
+  background-color: #00000030;
+  border-radius: 20px 20px 0px 0px;
+  overflow: hidden;
+
+  transition-property: height;
+  transition-duration: var(--chat-user-close-timing);
+  transition-timing-function: cubic-bezier(0.67, 0.22, 0.72, 0.99);
+
+  z-index: 101;
 }
 
-.chat>.chat-input>.chat-submit-input{
-	    height: 23px;
+#chat.open:not(.change-user) .chat-user:not(.close) {
+  transition-delay: calc(var(--chat-close-timing) + 0.5s);
+}
+
+#chat.close .chat-user,
+#chat .chat-user.close {
+  height: 0px;
+}
+
+#chat .chat-user .user-name {
+  background-color: #4a4a4a3b;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 1px solid black;
+}
+
+#chat .chat-user .user-chat {
+  background-color: transparent;
+  overflow: hidden;
+  height: 100%;
+}
+
+#chat .chat-user .user-chat .history {
+  overflow-y: scroll;
+  height: calc(100% - 70px);
+  padding-left: 5px;
+}
+
+#chat .chat-user .user-chat .history p {
+  margin: 0px;
+  margin-bottom: 3px;
+}
+
+#chat .chat-user .user-chat .history p .name {
+}
+
+#chat .chat-user .user-chat .history p .text {
+}
+
+#chat .chat-user .user-chat .input {
+  height: 70px;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: black;
+}
+#chat .chat-user .user-chat .input input {
+  width: calc(100% - 58px);
+}
+
+#chat .users {
+  position: absolute;
+  width: 130px;
+  height: var(--chat-icon-height);
+  bottom: 0px;
+  right: calc(var(--chat-icon-height) / 2);
+  background-color: grey;
+  white-space: nowrap;
+  overflow: hidden;
+  overflow-y: scroll;
+  border-radius: 25px 0px 0px 25px;
+  transition: width var(--chat-close-timing) ease-in 0.2s;
+  z-index: 103;
+}
+
+#chat .users:before {
+  content: "";
+  position: absolute;
+  width: 1000%;
+  height: 100%;
+  top: 100%;
+  background-color: grey;
+  z-index: 150;
+  transition: top ease-in var(--chat-user-close-timing);
+}
+
+#chat.change-user .users:before {
+  top: 0%;
+}
+
+#chat .users:after {
+  content: "";
+  position: absolute;
+  width: 1000%;
+  height: 100%;
+  left: 100%;
+  background-color: grey;
+  z-index: 150;
+
+  transition: left ease-in var(--chat-users-close-timing);
+}
+
+#chat:not(.close) .users:after {
+  transition-delay: var(--chat-close-timing);
+}
+
+#chat.close .users:after,
+#chat .users.close:after {
+  left: 0%;
+  transition-delay: var(--chat-user-close-timing);
+}
+
+#chat.close .users {
+  width: 0px;
+  transition-delay: calc(
+    var(--chat-user-close-timing) + var(--chat-users-close-timing)
+  );
+}
+
+#chat .users .user {
+  position: absolute;
+  width: 100%;
+  margin-top: 2px;
+  margin-left: 5px;
+  padding-left: 5px;
+  border-radius: 10px 0px 0px 10px;
+  border: 1px solid black;
+  background-color: white;
+  box-shadow: 0px 0px 20px -5px black;
+  transition: transform ease-in 0.2s;
+  z-index: 110;
+
+  cursor: pointer;
+}
+
+#chat .users .user.focus {
+  transform: translate(0%, 50%);
+  z-index: 120;
+}
+
+#chat.close .users .user,
+#chat .users.close .user {
+  transform: translate(10%, 50%) !important;
+}
+
+#chat .users .user:has(~ .user.focus) {
+  transform: translate(20%, -35%);
+}
+#chat .users .user:has(+ .user.focus) {
+  transform: translate(10%, 0%);
+  z-index: 115;
+}
+#chat .users .user:has(+ .user + .user.focus),
+#chat .users .user.focus + .user + .user {
+  z-index: 113;
+}
+#chat .users .user.focus ~ .user {
+  transform: translate(20%, 100%);
+}
+#chat .users .user.focus + .user {
+  transform: translate(10%, 75%);
+  z-index: 115;
 }

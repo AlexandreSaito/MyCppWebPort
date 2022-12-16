@@ -3,40 +3,95 @@
 	<head>
     <meta charset="UTF-8">
     <title>MyCppWebPort</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <link href="/dist/css/mysite.css" rel="stylesheet" type="text/css" />
-		
     <link href="/dist/chat/chat.css" rel="stylesheet" type="text/css" />
+		<script type="module" src="/dist/js-modules/main.js"></script>
+		<script type="module" src="/dist/chat/chat-module.js"></script>
 	</head>
-	<body>
-		<!-- .wrapper -->
-		<div class='wrapper'>
-			<header class='main-header'></header>
-			<aside class='main-sidebar'></aside>
-			<!-- .content-wrapper -->
-			<div class='content-wrapper'>
-				<h1>Layout aqui</h1>
-				<p><a href='/index'>Go to Home</a></p>
-				<div id='body-content'>
-					<[CONTENT]>
-				</div>
-			</div>
-			<!--<div style='position: absolute; width: 50px; height: 50px; background: red;z-index: 10000;    left: 50%;top: 0;'></div>-->
-			<!-- /.content-wrapper -->
-			<footer></footer>
-			
+	<body class="">
+  <header>
+    <div class="header-item-list">
+      <a class="header-item open-sidebar hide" href="#" title="more page options." >
+        <span class="more-button">&nbsp;</span>
+      </a>
+      <a class="header-item" href="/index">Index</a>
+      <a class="header-item" href="/game">Game</a>
+      <a class="header-item" href="/game2">Game 2</a>
+      <a id="header-chat" class="header-item pull-right show" href="#">
+        <i class="fa fa-comments-o" aria-hidden="true"></i>  
+      </a>
+      <a class="header-item pull-right" href="/todo">To Do</a>
+      <a class="header-item pull-right" href="/teste">Teste</a>
+    </div>
+  </header>
+  <aside class="sidebar left-sidebar">
+    <ul class="item-list">
+      <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item</a></li>
+      <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item 2</a></li>
+      <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item 3</a></li>
+      <li>
+        <a class="sidebar-item-ddl open"><i class="fa fa-eercast" aria-hidden="true"></i>Item With List</a>
+        <ul class="item-list">
+          <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item Inside 1</a></li>
+          <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item Inside 1</a></li>
+          <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item Inside 1</a></li>
+          <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item Inside 1</a></li>
+        </ul>
+      </li>
+      <li>
+        <a class="sidebar-item-ddl open"><i class="fa fa-eercast" aria-hidden="true"></i>List Openned</a>
+        <ul class="item-list">
+          <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item Inside 1</a></li>
+        </ul>
+      </li>
+      <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item 4</a></li>
+      <li><a><i class="fa fa-eercast" aria-hidden="true"></i>Item 5</a></li>
+    </ul>
+  </aside>
+  <aside class="sidebar right-sidebar"></aside>
+  <div id="user-name-form">
+    <div class="mini-form inline">
+      <label>Username: </label>
+      <input id="chat-user-name" type="text" class="input-form" />
+      <button id="chat-submit-user-name" type="button" class="btn-submit">OK</button>
+    </div>
+  </div>  
+  <div id="chat" class="close hidden">
+    <div class="chat-user close">
+      <div class="user-name"></div>
+      <div class="user-chat">
+        <div class="history">
+        </div>
+        <div class="input">
+          <input type="text" id="input-chat" />
+          <button type="button" id="send-chat">Enviar</button>
+        </div>
+      </div>
+    </div>
+    <div class="users">
+    </div>
+  </div>
+  <div id="contextMenu" class="close">
+    <div class="title"></div>
+    <ul class="itens"></ul>
+  </div>
+		
+  <div id="main-content">
+		<div class="content-wrapper">
+			<[CONTENT]>
 		</div>
-		<!-- /.wrapper -->
-
-		<script type="text/javascript" src="/dist/chat/chat.js"></script>
-		
-		<script type="text/javascript">
-			console.log("alow do layout");
-			initElements();
-			chatIni();
-		</script>
+  </div>
+			
+  <footer></footer>
+	<!--<script type="text/javascript" src="/dist/js/mysite.js"></script>-->
+	<!--<script type="text/javascript" src="/dist/chat/chat.js"></script>-->
+	<div id="script-wrapper">
 		<[SCRIPT]>
-		
-	</body>
+	</div>
+	
+			
+</body>
 </html>

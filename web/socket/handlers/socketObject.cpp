@@ -45,6 +45,11 @@ web::web_socket::SocketHandler::parse_json_message(std::string message) {
   if (c_json::check_value(&d, "reconnect") > 0)
     socMessage.reconnect = d["reconnect"].GetBool();
 
+	if(c_json::check_value(&d, "op") > 0)
+    socMessage.op = d["op"].GetInt();
+	else
+		socMessage.op = -1;
+	
   if (c_json::check_value(&d, "message") > 0) {
     StringBuffer buffer;
     Writer<StringBuffer> writer(buffer);

@@ -12,7 +12,10 @@ namespace http{
 class Response {
   int fdRequest;
   std::ostringstream content;
-
+	const std::string layoutScriptTag = "<[SCRIPT]>";
+	const std::string layoutContentTag = "<[CONTENT]>";
+	const std::string startContentScriptTag = "<[<script";
+	const std::string endContentScriptTag = "</script>]>";
 public:
   Header header;
   Response(int fdRequest);

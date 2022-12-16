@@ -1,0 +1,18 @@
+<div class="page-header">
+  <h3>Game</h3>
+</div>
+<div class="content" style="height: 100%;">
+	<div id="player" tabindex="0" style="top: 0px; left: 0px; width: 50px; height: 50px; background-color: white; position: absolute;"></div>
+</div>
+<[<script type="module">
+	import { domController } from "/dist/js-modules/main.js"
+	import { gameLoop } from "/dist/fggame/fg.js"
+	import { gameLoop } from "/dist/game/2deng.js"
+	
+	domController.pageLoops.push(setInterval(gameLoop, 1000/60));
+	// do cleaning
+	domController.onPageRemoved = ()=> {
+		
+	};
+	
+</script>]>

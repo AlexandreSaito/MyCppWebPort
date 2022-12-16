@@ -3,7 +3,10 @@
 web::http::Request::Request(int fdRequest) {this->fdRequest = fdRequest; }
 web::http::Header web::http::Request::GetHeader() const { return header; }
 void web::http::Request::ParseRequest(std::string data) {
-  std::vector<std::string> lines = cstf::splitString(data, "\n");
+  std::vector<std::string> lines;
+	if(data.find("\r\n") == -1) lines = cstf::splitString(data, "\r\n");
+	else lines = cstf::splitString(data, "\n");
+	
   std::cout << "\n\nParser: " << std::endl;
   int bodyRow = 0;
 
@@ -33,7 +36,9 @@ void web::http::Request::ParseRequest(std::string data) {
         method = Method::GET;
       } else if (line.find("POST") != -1) {
         method = Method::POST;
-      }
+      }else if(line.find("OPTIONS") != -1){
+        method = Method::OPTIONS;
+			}
 
       int indexUrl = line.find("/");
       int indexSpace = line.find(" ", indexUrl);

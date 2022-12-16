@@ -21,6 +21,7 @@ protected:
   std::string folderPath;
   std::string folderLayoutPath;
   std::string layoutFile;
+	std::string partialLayoutFile;
 	std::string pageName;
 	std::string responseContentType;
   bool useLayout;
@@ -28,6 +29,7 @@ protected:
 	bool sendJSON;
 
 public:
+  bool partialLayout;
   Response *response;
   Request *request;
   Page(Request *req, Response *res);

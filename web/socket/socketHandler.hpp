@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "handlers/chat.hpp"
+#include "handlers/game.hpp"
 #include "handlers/reflect.hpp"
 
 #ifndef SOCKET_HANDLER_H

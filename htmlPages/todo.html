@@ -1,0 +1,135 @@
+<div class="page-header">
+  <h3>To do</h3>
+</div>
+<div class="content">
+  <ul id="todo-list">
+  <ul>
+</div>
+
+<[<script type='text/javascript'>
+
+(function () {
+
+const todoListElement = document.querySelector("#todo-list");
+const todoList = [
+  { title: "To do List", completed: true, subItens: [] },
+  {
+    title: "To do List Tweaks",
+    completed: false,
+    subItens: [
+      { title: "Prettify List", completed: false },
+      { title: "Add Description", completed: false }
+    ]
+  },
+  {
+    title: "Server Tweaks",
+    completed: false,
+    subItens: [
+      { title: "Add handler to parser websocket content Lenght > 125", completed: true },
+      { title: "Check why messages > 1k characters do error", completed: false },
+      { title: "Add handler to send websocket content Lenght > 125", completed: false },
+    ]
+  },
+  { title: "Layout", completed: true, subItens: [] },
+  {
+    title: "Layout Tweaks",
+    completed: false,
+    subItens: [
+      { title: "Prettify Page Loading", completed: false },
+      { title: "Prettify Header", completed: false },
+      { title: "Prettify Left Sidebar", completed: false }
+    ]
+  },
+  {
+    title: "Modal",
+    completed: false,
+    subItens: [
+      { title: "HTML", completed: false },
+      { title: "Javascript Handlers", completed: false }
+    ]
+  },
+  {
+    title: "Alert",
+    completed: false,
+    subItens: [
+      { title: "HTML", completed: false },
+      { title: "Javascript Handlers", completed: false }
+    ]
+  },
+  {
+    title: "Chat",
+    completed: false,
+    subItens: [
+      { title: "HTML", completed: true },
+      { title: "Javascript Handlers", completed: true },
+      { title: "Server Connection", completed: true },
+    ]
+  },
+  {
+    title: "Chat Tweaks",
+    completed: false,
+    subItens: [
+      { title: "Working Private Message", completed: false },
+      { title: "History Messages", completed: false },
+      { title: "Prettify", completed: false },
+    ]
+  },
+  {
+    title: "Single Page Handler",
+    completed: false,
+    subItens: [
+      { title: "Server Handlers", completed: true },
+      { title: "Javascript Handlers", completed: true }
+    ]
+  },
+  {
+    title: "Simple Game",
+    completed: false,
+    subItens: [
+      { title: "Canvas", completed: false },
+      { title: "Player Controller", completed: false },
+      { title: "Socket Connection", completed: false },
+      { title: "Enemy Handler", completed: false },
+      { title: "Lobby", completed: false }
+    ]
+  }
+];
+
+createHTML();
+	
+function createHTML() {
+  let html = "";
+
+  for (var i = 0; i < todoList.length; i++) {
+    html += createHTMLLITODOList(todoList[i]);
+  }
+
+  todoListElement.innerHTML = html;
+}
+
+function createHTMLLITODOList(item) {
+  let html = "";
+
+  let hasChild = item.subItens && item.subItens.length > 0;
+  let htmlCompleted = "";
+  let htmlChildElement = "";
+  if (item.completed) htmlCompleted = "checked";
+  if (hasChild || item.completed) htmlChildElement = "disabled";
+
+  html += "<li>";
+  html += `<input type="checkbox" ${htmlCompleted} ${htmlChildElement} />`;
+  html += `<span>${item.title}</span>`;
+  if (hasChild) {
+    html += `<ul class="sub-itens">`;
+    for (let i = 0; i < item.subItens.length; i++)
+      html += createHTMLLITODOList(item.subItens[i]);
+    html += "</ul>";
+  }
+  html += "</li>";
+  return html;
+}
+	
+})();
+	
+
+</script>]>

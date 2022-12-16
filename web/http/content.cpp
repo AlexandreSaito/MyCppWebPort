@@ -8,6 +8,7 @@ void web::http::register_content_type() {
   // content_types["css"] = "application/EDI-X12";
   // content_types["css"] = "application/EDIFACT";
   content_types["javascript"] = "application/javascript";
+  content_types["js"] = "application/javascript";
   content_types["stream"] = "application/octet-stream";
   content_types["ogg"] = "application/ogg";
   content_types["pdf"] = "application/pdf";

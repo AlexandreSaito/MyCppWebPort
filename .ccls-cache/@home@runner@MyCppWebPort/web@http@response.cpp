@@ -25,7 +25,7 @@ void web::http::Response::Respond(int status, Header headers) {
   // std::cout << "Responding: \r\n\r\n" << header << headerRepresentation <<
   // content.str();
 
-	std::cout << "Fd Request: " << this->fdRequest << std::endl;
+  std::cout << "Fd Request: " << this->fdRequest << std::endl;
   close(this->fdRequest);
 }
 void web::http::Response::ReplaceContent(std::string tag,
@@ -33,22 +33,21 @@ void web::http::Response::ReplaceContent(std::string tag,
   this->content.str(cstf::replace(this->content.str(), tag, data));
 }
 void web::http::Response::AddLayout(std::string layout) {
-  std::string layoutScriptTag = "<[SCRIPT]>";
-  std::string contentScriptTag = "<[<script";
   std::string content = this->content.str();
 
-  int indexScriptTag = content.find(contentScriptTag);
+  int indexScriptTag = content.find(this->startContentScriptTag);
   while (indexScriptTag > -1) {
-    int indexEndScriptTag = content.find("</script>]>", indexScriptTag) + 9;
+    int indexEndScriptTag =
+        content.find(this->endContentScriptTag, indexScriptTag) + 9;
     std::string script = content.substr(
         (indexScriptTag + 2), indexEndScriptTag - (indexScriptTag + 2));
 
     content.erase(indexScriptTag, (indexEndScriptTag + 2) - indexScriptTag);
-    layout.insert(layout.find(layoutScriptTag), script);
+    layout.insert(layout.find(this->layoutScriptTag), script);
 
-    indexScriptTag = content.find(contentScriptTag);
+    indexScriptTag = content.find(this->startContentScriptTag);
   }
 
   layout = cstf::replace(layout, layoutScriptTag, "");
-  this->content.str(cstf::replace(layout, "<[CONTENT]>", content));
+  this->content.str(cstf::replace(layout, this->layoutContentTag, content));
 }
